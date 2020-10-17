@@ -1,0 +1,83 @@
+{{extend '../_layouts/home.html'}}
+
+{{block 'title'}}{{'多人博客 - 首页'}}{{/block}}
+
+{{block 'head'}}
+<link rel="stylesheet" href="/public/css/markdown-github.css">
+<style>
+  .panel .panel-heading .action i {
+    margin-right: 10px;
+  }
+</style>
+{{/block}}
+
+{{block 'body'}}
+<section class="container">
+  <div class="row">
+    <div class="col-md-9">
+      <article class="markdown-body">
+        <h1>{{ topic.title }}</h1>
+      <blockquote>
+        <p>作者: {{topic.nickname}}</p>
+        <p>{{ topic.content }}</p>
+      </blockquote>
+    
+    </article>
+      {{ if comments }}
+      {{ each comments }}
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <span>{{ $value.commentor }}</span> commented 
+          <span>{{ $value.comment_time }}</span>
+          <span class="action">
+            <a href=""><i class="glyphicon glyphicon-thumbs-up pull-right"></i></a>
+            <a href=""><i class="glyphicon glyphicon-remove-circle pull-right"></i></a>
+          </span>
+        </div>
+        <div class="panel-body">
+          {{ $value.content }}
+        </div>
+      </div>
+      {{ /each }}
+      {{ /if }}
+      
+      <form action="/topic/show" method="post">
+        <div class="form-group">
+          <label for="content">添加回复</label>
+          <textarea class="form-control" name="content" id="" cols="10" rows="10"></textarea>
+          <input type="hidden" value="{{user.nickname}}" name="commentor">
+          <input type="hidden" value="" name="comment_time" id="uptime">
+          <input type="hidden" value="{{topic.id}}" name="author">
+        </div>
+        <button type="submit" class="btn btn-success" onclick="upTime()">回复</button>
+      </form>
+    </div>
+  </div>
+</section>
+{{ block 'script' }}
+<script>
+  function upTime(){
+    var uptime = document.getElementById('uptime');
+    var time = new Date();
+    time = formDate(time);
+    uptime.setAttribute('value',time);
+    console.log(uptime.value);
+  }
+  //格式化时间
+function formDate(date){
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var day = date.getDate();
+    var hour = date.getHours();
+    var minute = date.getMinutes();
+    var second = date.getSeconds();
+    month = month < 10 ? '0' + month : month;
+    day = day < 10 ? '0' + day : day;
+    hour = hour < 10 ? '0' + hour : hour;
+    minute = minute < 10 ? '0' + minute : minute;
+    second = second < 10 ? '0' + second : second;
+    return year + '-' + month + '-' + day +' ' + hour + ':' + minute + ':' + second;
+}
+</script>
+{{ /block }}
+{{/block}}
